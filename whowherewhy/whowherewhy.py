@@ -1,10 +1,4 @@
-"""
-
-Ler's answer some important questions that plagued humanity since.
-
-the dawn of time with this simple XBlock.
-
-"""
+"""WhoWhereWhyXBlock displays to user his credentials and current course."""
 
 import pkg_resources
 import random
@@ -15,7 +9,12 @@ from xblock.fields import Scope, String
 
 @XBlock.wants('user')
 class WhoWhereWhyXBlock(XBlock):
-    """Docstrings are excessive and bullshit. Change my mind."""
+    """WhoWhereWhyXBlock displays to user his credentials and current course.
+
+    'who' button returns full name and email.
+    'where' button returns course_id.
+    'why' button returns a random quote from a pool of strings. 
+    """
 
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
@@ -45,7 +44,11 @@ class WhoWhereWhyXBlock(XBlock):
         'If you tell the truth you don’t have to remember anything.' +
         '– Mark Twain',
         'Be so good they can’t ignore you. – Steve Martin'
-        ]
+]
+
+    css_path = "static/css/whowherewhy.css"
+    html_path = "static/html/whowherewhy.html"
+    js_path = "static/js/src/whowherewhy.js"
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -54,18 +57,11 @@ class WhoWhereWhyXBlock(XBlock):
 
     # This view is for students and how it the block will be displayed in lms
     def student_view(self, context=None):
-        """
-        
-        Primary view of the WhoWhereWhyXBlock, shown to students.
-        
-        when viewing courses.
-        
-        """
-        html = self.resource_string("static/html/whowherewhy.html")
+        """Primary view of the WhoWhereWhyXBlock."""
+        html = self.resource_string(self.html_path)
         fragment = Fragment(html.format(self=self))
-        fragment.add_css(self.resource_string("static/css/whowherewhy.css"))
-        fragment.add_javascript(self.resource_string(
-            "static/js/src/whowherewhy.js"))
+        fragment.add_css(self.resource_string(self.css_path))
+        fragment.add_javascript(self.resource_string(self.js_path))
         fragment.initialize_js('WhoWhereWhyXBlock')
         return fragment
 
@@ -76,7 +72,7 @@ class WhoWhereWhyXBlock(XBlock):
                          self).studio_view(context=context)
 
         # We could also move this function to a different file
-        fragment.add_javascript(load("static/js/whowherewhy.js"))
+        fragment.add_javascript(load(self.js_path))
         fragment.initialize_js('WhoWhereWhyXBlock')
 
         return fragment
@@ -86,7 +82,7 @@ class WhoWhereWhyXBlock(XBlock):
         """Return author view fragment on Studio."""
         # creating xblock fragment
         fragment = Fragment(u"<!-- This is the studio -->")
-        fragment.add_javascript(load("static/js/whowherewhy.js"))
+        fragment.add_javascript(load(self.js_path))
         fragment.initialize_js('WhoWhereWhyXBlock')
 
         return fragment
@@ -104,10 +100,6 @@ class WhoWhereWhyXBlock(XBlock):
     # Emails consist of a primary and a backup one(if it was specified).
     def get_current_user_emails(self):
         """Return emails of a user."""
-        # Yes, I'm aware that it's a terrible practice to constantly
-        # redefine this variable and do so in multiple methods.
-        # At this time, however, I'm strugling to come up with a more
-        # logical and laconic way make it accessible block-wide.
         user_service = self.runtime.service(self, 'user')
         xb_user = user_service.get_current_user()
 
@@ -122,7 +114,7 @@ class WhoWhereWhyXBlock(XBlock):
     # Handler for the 'who' button
     @XBlock.json_handler
     def who_handler(self, data, suffix=''):
-        """Return the username and email of a current user."""
+        """'who' button handler. Returns full name and email of a current user."""
         # Just to show data coming in...
         assert data['requested'] == 'name'
 
@@ -134,7 +126,7 @@ class WhoWhereWhyXBlock(XBlock):
     # Handler for the 'where' button
     @XBlock.json_handler
     def where_handler(self, data, suffix=''):
-        """Return the id of a current course."""
+        """'where' button handler. Returns the id of a current course."""
         # Just to show data coming in...
         assert data['requested'] == 'course'
 
@@ -144,7 +136,7 @@ class WhoWhereWhyXBlock(XBlock):
     # Handler for the 'why' button
     @XBlock.json_handler
     def why_handler(self, data, suffix=''):
-        """Inspire user to be a better person."""
+        """'why' button handler. Inspires user to be a better person."""
         # Just to show data coming in...
         assert data['requested'] == 'inspiration'
 
