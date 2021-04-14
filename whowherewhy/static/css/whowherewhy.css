@@ -1,0 +1,9 @@
+/* CSS for WhoWhereWhyXBlock */
+
+.whowherewhy_block .count {
+    font-weight: bold;
+}
+
+.whowherewhy_block p {
+    cursor: pointer;
+}
